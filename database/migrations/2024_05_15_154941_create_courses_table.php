@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('fees');
             $table->integer('discount')->nullable();
-            $table->integer('afterdiscount')->nullable();
+            
             $table->timestamps();
         });
     }

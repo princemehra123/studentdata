@@ -17,6 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('course_id');
             $table->primary(['course_id','student_id']);
+            $table->string('name');
+            $table->integer('fees');
+            $table->integer('discount')->nullable();
+            $table->integer('finalprice')->nullable();
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->timestamps();
         });

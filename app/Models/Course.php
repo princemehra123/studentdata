@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use HasFactory;
-    protected $fillable=['name','fees','discount','afterdiscount'];
+    protected $fillable=['name','fees','discount'];
 
     public function allstudent()
     {

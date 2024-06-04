@@ -75,9 +75,15 @@ $request->photo->move(public_path('photo'),$filename);
         {
             foreach($request->course_id as $cid)
             {
+                $cdtl=course::find($cid);
               $csinfo=[
                     'course_id'=>$cid,
-                    'student_id'=>$obj->id
+                    'student_id'=>$obj->id,
+                    'name'=>$cdtl->name,
+                    'fees'=>$cdtl->fees,
+                    'discount'=>$cdtl->discount,
+                    'finalprice'=>$cdtl->discount?$cdtl->fees-$cdtl->fees*$cdtl->discount/100:$cdtl->fees
+
                     ];
 
                 StudentCourse::create($csinfo);
@@ -151,6 +157,36 @@ $request->photo->move(public_path('photo'),$filename);
             $student->doj=$request->doj;
             $student->photo=$filename??"";
             $student->save();
+
+
+            if(count($request->course_id)>0)
+            {
+                $sid=$student->id;
+                StudentCourse::where('student_id',$sid)->delete();
+
+
+                foreach($request->course_id as $cid)
+                {
+                    $cdtl=course::find($cid);
+                    $csinfo=[
+                          'course_id'=>$cid,
+                          'student_id'=>$student->id,
+                          'name'=>$cdtl->name,
+                          'fees'=>$cdtl->fees,
+                          'discount'=>$cdtl->discount,
+                          'finalprice'=>$cdtl->discount?$cdtl->fees-$cdtl->fees*$cdtl->discount/100:$cdtl->fees
+
+                          ];
+
+
+
+                    StudentCourse::create($csinfo);
+
+                }
+            }
+
+
+
         return redirect('/student')->with('grt','Data Updated Successfully');
 
 
