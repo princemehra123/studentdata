@@ -69,13 +69,14 @@ Fee Structure
                 <div class="alert alert-danger">{{$e}}</div>
 
                 @endforeach
-             <form method="post" action="/course/">
+
+             <form method="post" action="/course/" id="frm_{{$info['id']}}">
                  @csrf
 
              <div class="mb-3">
 
              <label for="name">Select Course</label>
-             <select  name="name"  class="form-select" id="name" required >
+             <select  name="name"  class="form-select" onchange="loadInfo(frm_{{$info['id']}})" id="name" required >
                 @foreach($allcourseid as $key=>$value)
 
                 <option value="{{$key}}">{{$value}}</option>
@@ -144,4 +145,20 @@ Fee Structure
 
 </div>
 
+
+<script>
+  function loadInfo(frm){
+    // alert(frm.name.value)
+    $.ajax({
+        url:'/course/'+frm.name.value,
+        type:"get",
+        success:function(r){
+            alert("hello");
+        }
+    });
+
+  }
+
+
+</script>
 @endsection

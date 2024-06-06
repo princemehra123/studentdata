@@ -37,7 +37,7 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'name'=>"required|min:3|max:40",
             'fees'=>"required|numeric|min:500"
@@ -50,7 +50,7 @@ class CourseController extends Controller
         ];
         course::create($info);
         return redirect('/course')->with('grt','Data Saved Successfully');
-    
+
     }
 
     /**
@@ -59,9 +59,12 @@ class CourseController extends Controller
      * @param  \App\Models\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function show(Course $course)
+    public function show(Course $course,$id)
     {
         //
+        $course=course::find($id);
+        return $course;
+
     }
 
     /**

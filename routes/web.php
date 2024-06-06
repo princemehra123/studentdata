@@ -22,8 +22,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::resource('/course',CourseController::class);
+Route::get('/course/{id}',[CourseController::class,'show']);
 
 
 Route::resource('/student',StudentController::class);
+
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
