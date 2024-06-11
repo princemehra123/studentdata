@@ -37,10 +37,17 @@
         @php
         $allcourse=[];
         $allcourseid=[];
+        $firstcourse="";
         foreach($info->allcourse as $cid){
-if(isset($cid['courseId']['name']))
-     $allcourse[]=$cid['courseId']['name'];
-        $allcourseid[$cid['courseId']['id']]=$cid['courseId']['name'];
+
+            if(isset($cid['name'])){
+                if(!$firstcourse){
+                    $firstcourse=$cid;
+                }
+                $allcourse[]=$cid['name'];
+                $allcourseid[$cid['course_id']]=$cid['name'];
+            }
+
         }
         $allcourse=implode(',',$allcourse);
         @endphp
@@ -59,9 +66,14 @@ Fee Structure
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel">{{$info['name']}}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
+
+        <form method="post" action="/studentcourse/{{$info['id']}}" id="frm_{{$info['id']}}">
+              @csrf
+            @method('get')
         <div class="modal-body">
 
             <div class="container border" >
@@ -70,13 +82,13 @@ Fee Structure
 
                 @endforeach
 
-             <form method="post" action="/course/" id="frm_{{$info['id']}}">
-                 @csrf
+
 
              <div class="mb-3">
 
              <label for="name">Select Course</label>
-             <select  name="name"  class="form-select" onchange="loadInfo(frm_{{$info['id']}})" id="name" required >
+
+             <select  name="name"  class="form-select"  onchange="loadInfo(frm_{{$info['id']}},{{$info['id']}})" id="name" required >
                 @foreach($allcourseid as $key=>$value)
 
                 <option value="{{$key}}">{{$value}}</option>
@@ -89,22 +101,34 @@ Fee Structure
              <div class="mb-3">
 
              <label for="fees">Enter Fees</label>
-             <input type="number" name="fees" class="form-control"id="fees" placeholder="Enter Fees" required>
+             <input type="number" name="fees"  readonly class ="form-control"id="fees" placeholder="Enter Fees" value="{{$firstcourse['fees']}}"required>
 
              </div>
+
              <div class="mb-3">
 
              <label for="discount">Enter Discount</label>
-             <input type="number" name="discount" class="form-control"id="discount" placeholder="Enter Discount">
+             <input type="number" name="discount" min="0" max="100"value="{{$firstcourse['discount']}}" class="form-control"id="discount" placeholder="Enter Discount" onchange="changefees(frm_{{$info['id']}})" onkeyup="changefees(frm_{{$info['id']}})">
+            </div>
+
+            <div class="mb-3">
+
+                <label for="finalprice">Final Fees</label>
+                <input type="number" name="finalprice" value="{{$firstcourse['fees']-$firstcourse['fees']*$firstcourse['discount']/100}}"
+
+                class="form-control"id="finalprice" placeholder="Enter Final Fees"
+
+                onchange="changefees2(frm_{{$info['id']}})" onkeyup="changefees2(frm_{{$info['id']}})">
+            </div>
 
 
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary">Save changes</button>
+                </div>
+         </form>
 
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
       </div>
     </div>
   </div>
@@ -147,17 +171,35 @@ Fee Structure
 
 
 <script>
-  function loadInfo(frm){
-    // alert(frm.name.value)
-    $.ajax({
-        url:'/course/'+frm.name.value,
-        type:"get",
-        success:function(r){
-            alert("hello");
-        }
-    });
+    function loadInfo(frm,sid){
+      $.ajax({
+          url:'/course/'+frm.name.value+"/"+sid,
+          type:"get",
+          success:function(r){
+             frm.fees.value=r.fees;
+             frm.discount.value=r.discount;
+             frm.finalprice.value=r.fees-r.fees*r.discount/100;
+          }
+        });
+    }
+
+    function changefees(frm)
+    {
+        if(frm.discount.value<=100 && frm.discount.value>=0)
+            frm.finalprice.value=frm.fees.value-frm.fees.value*frm.discount.value/100;
+
 
   }
+
+  function changefees2(frm)
+  {
+    frm.discount.value=(frm.fees.value-frm.finalprice.value)*100/frm.fees.value;
+  }
+
+
+
+
+
 
 
 </script>

@@ -22,7 +22,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::resource('/course',CourseController::class);
-Route::get('/course/{id}',[CourseController::class,'show']);
+Route::get('/course/{id}/{sid}',[CourseController::class,'showw']);
+Route::get('/studentcourse/{id}',[StudentController::class,'studentcourse']);
 
 
 Route::resource('/student',StudentController::class);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -59,11 +60,9 @@ class CourseController extends Controller
      * @param  \App\Models\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function show(Course $course,$id)
+    public function show(Course $course)
     {
         //
-        $course=course::find($id);
-        return $course;
 
     }
 
@@ -113,4 +112,12 @@ class CourseController extends Controller
 
 
     }
+
+public function showw(course $course,$id,$sid)
+    {
+        $course=StudentCourse::where(['course_id'=>$id,'student_id'=>$sid])->get()->first();
+        return $course;
+
+    }
+
 }

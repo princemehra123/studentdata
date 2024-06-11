@@ -202,4 +202,22 @@ $request->photo->move(public_path('photo'),$filename);
     {
         //
     }
+
+
+    public function studentcourse($id)
+    {
+
+        $cid=request('name');
+        $sc=StudentCourse::where(['student_id'=>$id,'course_id'=>$cid])->first();
+
+        if($sc){
+            $sc->discount=request('discount');
+            $sc->finalprice=request('finalprice');
+            $info=$sc->toArray();
+            unset($info['student_id'],$info['course_id'],$info['created_at'],$info['updated_at']);
+            StudentCourse::where(['student_id'=>$id,'course_id'=>$cid])->update($info);
+            return redirect('/student')->with('grt','Fees Updated Successfully');
+
+        }
+    }
 }
